@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Live Rates</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-slate-900 text-white font-sans">
+    <div class="p-6 border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <h1 class="text-2xl font-black tracking-tighter italic">MARKET <span class="text-blue-500 underline">LIVE</span></h1>
+        <p id="status-text" class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Connecting...</p>
+    </div>
+
+    <div class="p-4">
+        <div class="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-[2rem] shadow-2xl mb-6">
+            <p class="text-[10px] uppercase tracking-[0.2em] font-bold opacity-70 mb-2">Current Labour Rate</p>
+            <div class="flex items-baseline gap-2">
+                <span class="text-5xl font-black italic">₹<span id="display-rate">000</span></span>
+                <span class="text-sm font-bold opacity-80">/ Day</span>
+            </div>
+        </div>
+
+        <div id="broadcast-box" class="hidden bg-red-500/10 border border-red-500/20 p-4 rounded-2xl mb-6">
+            <p id="display-msg" class="text-sm font-medium text-red-200"></p>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsrZ7Hxg665Kx83jt-4OZsexmZ--iTaNI",
+            authDomain: "labourapp-9b954.firebaseapp.com",
+            projectId: "labourapp-9b954",
+            storageBucket: "labourapp-9b954.firebasestorage.app",
+            messagingSenderId: "782574249278",
+            appId: "1:782574249278:web:a6d282ef10174a3196786f",
+            measurementId: "G-HWB45HTS4K"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        db.collection("settings").doc("rates").onSnapshot((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                document.getElementById('display-rate').innerText = data.base_rate || '000';
+                if (data.message) {
+                    document.getElementById('broadcast-box').classList.remove('hidden');
+                    document.getElementById('display-msg').innerText = data.message;
+                }
+                document.getElementById('status-text').innerText = "● System Live";
+            }
+        });
+    </script>
+</body>
+</html>
